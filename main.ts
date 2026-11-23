@@ -1,18 +1,31 @@
-// News-image entry for make.fun's "Sum up 23 November's world news
-// in one image". The front page (entry.png) was drawn by gen_image.py
-// in this repository; this program only copies it to the grader's
-// output directory. Node 22, standard library only. No network, no
-// randomness: every run writes exactly the same bytes.
-import { copyFileSync, mkdirSync, statSync } from 'node:fs';
-import { dirname, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { copyFileSync, mkdirSync, statSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
-mkdirSync(outDir, { recursive: true });
+// Entry program for make.fun news-image-20261123.
+// Copies the pre-rendered entry.png (drawn by gen_image.py) into the
+// output directory. Standard library only, no network, deterministic:
+// the same input bytes are copied on every run.
+const MAX_BYTES = 1048576; // 1 MiB, the competition's image size cap
+
 const here = dirname(fileURLToPath(import.meta.url));
-const src = join(here, 'entry.png');
-// The gate allows at most 1 MiB: refuse to write an oversize file.
-if (statSync(src).size > 1048576) {
-  throw new Error(`entry.png is ${statSync(src).size} bytes, over the 1 MiB limit`);
+const src = join(here, "entry.png");
+const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
+const out = join(outDir, "entry.png");
+
+let size: number;
+try {
+  size = statSync(src).size;
+} catch {
+  console.error(`entry.png not found next to main.ts: ${src}`);
+  process.exit(1);
 }
-copyFileSync(src, join(outDir, 'entry.png'));
+
+if (size > MAX_BYTES) {
+  console.error(`entry.png is ${size} bytes, over the ${MAX_BYTES} byte cap`);
+  process.exit(1);
+}
+
+mkdirSync(outDir, { recursive: true });
+copyFileSync(src, out);
+console.log(`copied entry.png (${size} bytes) to ${out}`);
