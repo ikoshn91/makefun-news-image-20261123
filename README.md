@@ -1,47 +1,44 @@
-# makefun-news-image-20261123
+# THE WORLD TODAY — Monday 23 November 2026
 
-[![make.fun · news-image-20261123](https://make.fun/badge/news-image-20261123.svg)](https://make.fun/bounty/news-image-20261123?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261123)
+[![news-image-20261123](https://make.fun/badge/news-image-20261123.svg)](https://make.fun/bounty/news-image-20261123?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261123)
 [![rank](https://make.fun/badge/news-image-20261123/ikoshn91/makefun-news-image-20261123/rank.svg)](https://make.fun/bounty/news-image-20261123/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261123)
 [![reward](https://make.fun/badge/news-image-20261123/ikoshn91/makefun-news-image-20261123/reward.svg)](https://make.fun/bounty/news-image-20261123?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261123)
 
-A one-page atlas dashboard summing up Monday 23 November 2026's
-world news, for make.fun's "Sum up 23 November's world news in one
-image" bounty ($100 in USDC, 50 places paid).
+A one-page atlas dashboard summing up the world's news of **Monday 23
+November 2026** — 38 dated stories across 8 regions, drawn as a newspaper
+front page. The three leads are the COP31 collapse in Antalya with no
+deal, the Dymer apartment-block death toll climbing to 10, and the
+Democrats winning a record House majority of 258 seats. Below them a
+market heatmap strip carries Monday's AI sell-off (Nikkei −5.06%), and
+eight colour-coded region panels cover the Middle East, Europe, Asia, the
+Americas, Africa, markets, science and sport — from two tankers ablaze
+near Hormuz and the Belgium airport shutdown to Alcaraz's first ATP
+Finals title and the Hunger Games' $120M opening. A ticker bar at the
+bottom carries three more Monday stories.
 
-## The image
+This is an entry for make.fun's
+[news-image-20261123](https://make.fun/bounty/news-image-20261123) bounty:
+sum up 23 November's world news in one image. $100 in USDC, 50 places
+paid. An AI judge compares entries two at a time and picks the one that
+best sums up its day's news.
 
-`entry.png` (1024×1024) is "THE WORLD TODAY — Monday 23 November
-2026": three lead stories (COP31 collapses with no deal, the Dymer
-death toll climbs to 10, Democrats win a record House majority)
-plus a market heatmap strip for Monday's Asia rout, over eight
-colour-coded region panels holding 35 more dated stories — 38
-stories in 8 regions — plus an "Also in the news" ticker with
-three Monday stories. It is drawn programmatically with Python
-Pillow (`gen_image.py`), so every word is pixel-perfect text — no
-AI image generation, no downloaded pictures.
+## How it works
 
-- **Lead — COP31:** the Antalya summit ends with no deal; the EU
-  and ~130 parties reject a text with no fossil fuels after
-  record overtime.
-- **Lead — Ukraine:** the Dymer apartment-block strike toll
-  climbs to 10; a 7-year-old is pulled alive after 14 hours.
-- **Lead — Washington:** Democrats win 258 House seats, the
-  biggest majority since 1992; the Senate is theirs too.
-- **Regions:** Middle East, Europe, Asia, Americas, Africa,
-  Markets, Science & Culture, Sport — from the supertankers
-  ablaze near Hormuz and Belgium's grounded airports to Alcaraz's
-  first ATP Finals title and the Hunger Games' $120M opening.
+- `gen_image.py` draws `entry.png` (1024×1024) with Pillow and the
+  system DejaVu fonts. Every headline and body is measured with the real
+  font metrics before it is drawn, and the program stops with a clear
+  error if any text would overflow its card or panel — so the image you
+  see is exactly the image the program guarantees.
+- `main.ts` (Node 22, standard library only) copies `entry.png` into
+  the output directory named by `MAKEFUN_OUTPUT_DIR` (default
+  `/output`), refusing if the image is over the 1 MiB cap.
+- No downloaded images, no AI image generation, no network: every word
+  is real text rendered by the program, and two runs produce
+  byte-identical files.
 
-Sources: CNN, Reuters, AP, WSJ and same-day roundups — reports
-published 23 November 2026.
+## Run it
 
-## The program
-
-`main.ts` (Node 22, standard library only) copies `entry.png` to
-`/output/entry.png`. No network, no randomness: two runs write the
-same bytes. Regenerate the image with `python3 gen_image.py` (needs
-Pillow); verify determinism with `sha256sum` across two runs.
-
-## License
-
-MIT — see LICENSE.
+```sh
+python3 gen_image.py   # writes entry.png
+mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts   # copies it to out/entry.png
+```
